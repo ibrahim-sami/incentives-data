@@ -16,7 +16,7 @@ with pubsub_v1.SubscriberClient() as subscriber:
     # relevant GCP ids
     project_id = 'hub-data-295911'
     topic_id = 'incentives-data-pull'
-    sub_id = 'incentives-data-pull-sub'
+    sub_id = 'gcf-incentives-data-pull-us-central1-incentives-data-pull'
     topic_name = f'projects/{project_id}/topics/{topic_id}'
     subscription_name = f'projects/{project_id}/subscriptions/{sub_id}'
    

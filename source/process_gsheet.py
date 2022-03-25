@@ -5,7 +5,6 @@ from urllib.error import HTTPError
 from pytz import timezone
 from datetime import datetime
 import pandas as pd
-from google.cloud import pubsub_v1
 
 from utils import (setup_logging, get_spreadsheet_values, 
                     push_to_bigq, COLUMNS)
