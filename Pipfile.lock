@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "fb9dea81b8f4ca7968db07af91b270543c2a504b8bcb1e4195630ee52693f749"
+            "sha256": "d3d519ae30850f9215d97983ff7b64f1fca53633276030a367befe7e624dd858"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -121,6 +121,14 @@
             ],
             "index": "pypi",
             "version": "==3.0.0"
+        },
+        "google-cloud-pubsub": {
+            "hashes": [
+                "sha256:4cef16ef78b533f5177aaafc85c9ceac29a61afdbd2efad017999859c7ea5ed4",
+                "sha256:6ed3c9d97f88d1ff02dd80c1f5b6703efec75a7aacabd9285ac4fe0b22b50203"
+            ],
+            "index": "pypi",
+            "version": "==2.11.0"
         },
         "google-crc32c": {
             "hashes": [
@@ -386,6 +394,13 @@
             ],
             "markers": "python_version >= '3.5'",
             "version": "==3.19.4"
+        },
+        "protobuf-to-dict": {
+            "hashes": [
+                "sha256:dd152977f4c39942d3e1a233f6b3df35c548fffddfeda1fb88cb3b52a3b366e7"
+            ],
+            "index": "pypi",
+            "version": "==0.1.0"
         },
         "pyarrow": {
             "hashes": [

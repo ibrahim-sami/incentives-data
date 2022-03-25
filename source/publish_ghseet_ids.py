@@ -1,4 +1,6 @@
 from pathlib import Path
+from typing import final
+from google.cloud import pubsub_v1
 
 from utils import get_auth_token, setup_logging
 
@@ -18,9 +20,8 @@ def execute(event, context):
     response = service.files().list(q=query).execute()
 
     folders = response.get('files', [])
-    logger.debug(f'{len(folders)} found: {folders}')
+    logger.debug(f'{len(folders)} folders found')
 
-    
     files = []
     file_type = 'application/vnd.google-apps.spreadsheet'
     for folder in folders:
@@ -30,9 +31,27 @@ def execute(event, context):
         response = service.files().list(q=query, fields='files(id, name)').execute()
         files.extend(response.get('files', []))
 
-    logger.debug('Pushing file ids to Pub/Sub queue')
-    for f in files:
-        print(f)
+    project_id = 'hub-data-295911'
+    topic_id = 'incentives-data-pull'
+    with pubsub_v1.PublisherClient() as publisher:
+        topic_path = publisher.topic_path(project_id, topic_id)
+        logger.debug(f'Pushing file ids to Pub/Sub topic {topic_path}')
+        results = []
+        # TODO remove list limit for testing
+        for f in files[0:3]:
+            logger.debug(f"Filename: {f['name']} FileID: {f['id']} pushed")
+            future = publisher.publish( topic=topic_path, 
+                                        data=b'Incentives data file', 
+                                        id=f['id'], 
+                                        name=f['name']
+                                        )
+            try:
+                future.result()
+            except Exception as ex:
+                future.cancel()
+                raise ex
+        
+        return results
 
 if __name__ == "__main__":
     execute(None, None)

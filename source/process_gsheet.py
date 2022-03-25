@@ -2,6 +2,7 @@ import os
 import re
 import json
 from pathlib import Path
+from urllib.error import HTTPError
 from pytz import timezone
 from datetime import datetime
 import pandas as pd
@@ -19,7 +20,10 @@ def execute(event, context):
             file_name = event['attributes']['name']
 
             logger.debug(f"Pulling data for {file_name} ({file_id})")
-            values = get_spreadsheet_values(gsheet_id=file_id, sheet_range='All Incentives')
+            try:
+                values = get_spreadsheet_values(gsheet_id=file_id, sheet_range='All Incentives')
+            except HTTPError as ex:
+                raise ex
             data = values[1:]
             data = pd.DataFrame(data)
             # keep first 10 columns
@@ -35,7 +39,8 @@ def execute(event, context):
             data['ingestion_timestamp'] = datetime.now(tz=timezone('Africa/Nairobi'))
             logger.debug(f"Pushing data to big query for {file_name} ({file_id})")
             project = 'hub-data-295911'
-            dataset = 'incentives_data'
+            # TODO change dataset from dev to prod
+            dataset = 'incentives_data_test'
             table = re.sub(r'\W+', '_', str(file_name).lower())
             job = push_to_bigq(df=data, project=project, dataset=dataset, table=table, schema=None)
             errors = job.result().errors
@@ -49,6 +54,7 @@ def execute(event, context):
 if __name__ == "__main__":
     execute(None, None)
 
+    # for testing 
     # p_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
     # sample_file_list = os.path.join(p_dir, 'output', 'sample_file_list.txt')
     # with open(sample_file_list, 'r', encoding='utf-8') as f:
