@@ -1,4 +1,4 @@
-# Incentives Data Pipelie
+# Incentives Data Pipeline
 For more infomation see documentation:
 https://bodhi.samasource.org/display/BA/Incentives+Data+Pipeline
 
