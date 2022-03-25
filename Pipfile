@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+google-cloud-bigquery = "*"
+google-cloud-logging = "*"
+google-api-python-client = "*"
+google-auth = "*"
+pyarrow = "*"
+pygsheets = "*"
+pandas = "*"
+google-auth-httplib2 = "*"
+google-auth-oauthlib = "*"
+pytz = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
