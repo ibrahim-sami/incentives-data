@@ -39,8 +39,7 @@ def execute(event, context):
 
             logger.debug(f"Pushing data to big query for {file_name} ({file_id})")
             project = 'hub-data-295911'
-            # TODO change dataset from dev to prod
-            dataset = 'incentives_data_test'
+            dataset = 'incentives_data'
             table = re.sub(r'\W+', '_', str(file_name).lower())
             job = push_to_bigq(df=data, project=project, dataset=dataset, table=table, schema=None)
             errors = job.result().errors
