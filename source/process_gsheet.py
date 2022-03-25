@@ -1,11 +1,11 @@
 import os
 import re
-import json
 from pathlib import Path
 from urllib.error import HTTPError
 from pytz import timezone
 from datetime import datetime
 import pandas as pd
+from google.cloud import pubsub_v1
 
 from utils import (setup_logging, get_spreadsheet_values, 
                     push_to_bigq, COLUMNS)
@@ -23,7 +23,7 @@ def execute(event, context):
             try:
                 values = get_spreadsheet_values(gsheet_id=file_id, sheet_range='All Incentives')
             except HTTPError as ex:
-                raise ex
+                raise (f"HttpError: {ex}")
             data = values[1:]
             data = pd.DataFrame(data)
             # keep first 10 columns
@@ -37,6 +37,7 @@ def execute(event, context):
             # data.to_csv(output_path)
 
             data['ingestion_timestamp'] = datetime.now(tz=timezone('Africa/Nairobi'))
+
             logger.debug(f"Pushing data to big query for {file_name} ({file_id})")
             project = 'hub-data-295911'
             # TODO change dataset from dev to prod
@@ -46,9 +47,9 @@ def execute(event, context):
             errors = job.result().errors
             logger.debug({'Errors':errors})
         except KeyError as e:
-            logger.debug("Invalid attributes supplied.")
+            raise Exception("KeyError. Invalid attributes supplied.")
     else:
-        logger.debug('No attributes supplied.')
+        raise Exception('KeyError. No attributes supplied.')
 
 
 if __name__ == "__main__":
