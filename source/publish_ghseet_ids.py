@@ -37,8 +37,8 @@ def execute(event, context):
         topic_path = publisher.topic_path(project_id, topic_id)
         logger.debug(f'Pushing file ids to Pub/Sub topic {topic_path}')
         results = []
-        # TODO remove list limit for testing
-        for f in files[0:3]:
+
+        for f in files:
             logger.debug(f"Filename: {f['name']} FileID: {f['id']} pushed")
             future = publisher.publish( topic=topic_path, 
                                         data=b'Incentives data file', 
