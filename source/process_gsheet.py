@@ -1,7 +1,6 @@
 import os
 import re
 from pathlib import Path
-from urllib.error import HTTPError
 from pytz import timezone
 from datetime import datetime
 import pandas as pd
@@ -19,10 +18,9 @@ def execute(event, context):
             file_name = event['attributes']['name']
 
             logger.debug(f"Pulling data for {file_name} ({file_id})")
-            try:
-                values = get_spreadsheet_values(gsheet_id=file_id, sheet_range='All Incentives')
-            except HTTPError as ex:
-                raise (f"HttpError: {ex}")
+            values = get_spreadsheet_values(gsheet_id=file_id, sheet_range='All Incentives')
+            if not values:
+                raise Exception(f"Fatal Error. Reading spreadsheet {file_name} failed")
             data = values[1:]
             data = pd.DataFrame(data)
             # keep first 10 columns

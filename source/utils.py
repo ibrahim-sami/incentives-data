@@ -1,11 +1,14 @@
 import os
 import logging
 import json
+import time
+import random
 
 from google.cloud import bigquery
 from google.cloud import logging as cloudlogging
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
+import googleapiclient.errors
 import pygsheets
 
 
@@ -76,12 +79,21 @@ def get_auth_token(api_name):
 
 
 def get_spreadsheet_values(gsheet_id, sheet_range):
+    retry_count = 10
     service = get_auth_token(api_name='sheets')
-
-    # new method: gets only specific sheet. uses sheets api v4
-    request = service.spreadsheets().values().batchGet(spreadsheetId=gsheet_id, ranges=[sheet_range])
-    response = request.execute()
-    values = response['valueRanges'][0]['values']
+    values = None
+    for n in range(0,10): # retry 10 times with exponential backoff
+        try:
+            # new method: gets only specific sheet. uses sheets api v4
+            request = service.spreadsheets().values().batchGet(spreadsheetId=gsheet_id, ranges=[sheet_range])
+            response = request.execute()
+            values = response['valueRanges'][0]['values']
+            break
+        except googleapiclient.errors.HttpError as ex:
+            # raise (f"HttpError: {ex}")
+            # apply exponential backoff.
+            time.sleep((2 ** n) + random.randint(0, 1000) / 1000)
+    
 
     # old method: downloads entire file. uses the drive api v3
     # request = service.files().get_media(fileId=spreadsheet_id, range=sheet_range)
