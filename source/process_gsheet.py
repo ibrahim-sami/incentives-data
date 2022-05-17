@@ -4,6 +4,7 @@ from pathlib import Path
 from pytz import timezone
 from datetime import datetime
 import pandas as pd
+import json
 
 from utils import (setup_logging, get_spreadsheet_values, 
                     push_to_bigq, COLUMNS)
@@ -52,24 +53,24 @@ if __name__ == "__main__":
     execute(None, None)
 
     # for testing 
-    # p_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
-    # sample_file_list = os.path.join(p_dir, 'output', 'sample_file_list.txt')
-    # with open(sample_file_list, 'r', encoding='utf-8') as f:
-    #     lines = f.readlines()
-    #     for line in lines:
-    #         line = str(line).replace("\'", "\"")
-    #         print(line)
-    #         file = json.loads(line)
-    #         file_id = file['id']
-    #         file_name = file['name']
+    p_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
+    sample_file_list = os.path.join(p_dir, 'output', 'sample_file_list.txt')
+    with open(sample_file_list, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+        for line in lines:
+            line = str(line).replace("\'", "\"")
+            print(line)
+            file = json.loads(line)
+            file_id = file['id']
+            file_name = file['name']
 
-    #         event = dict(
-    #             attributes=dict(
-    #             id=file_id,
-    #             name=file_name
-    #         ))
+            event = dict(
+                attributes=dict(
+                id=file_id,
+                name=file_name
+            ))
 
-    #         execute(event, None)
+            execute(event, None)
 
         
 

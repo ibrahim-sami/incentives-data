@@ -3,10 +3,15 @@ from typing import final
 from google.cloud import pubsub_v1
 
 from utils import get_auth_token, setup_logging
+from delete_tables import delete_tables
 
 def execute(event, context):
     logger = setup_logging(Path(__file__).stem)
     logger.debug('Executing. . .')
+
+    logger.debug('Deleting tables for files that were removed or renamed on the root folder')
+    tables_to_del = delete_tables()
+    logger.debug(f"All tables to delete: {tables_to_del}")
 
     logger.debug('Pulling list of folders from root folder')
     root_folder_url = 'https://drive.google.com/drive/u/0/folders/1BNDA99Ca6X7Q1QQX_PPwIDQqm26WfJvy'
